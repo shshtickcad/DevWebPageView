@@ -1,0 +1,123 @@
+@page
+@model IEnumerable<TickToolCloud.Entities.Entity.Master>
+@*<div class="float-left">
+        @(Html.DevExtreme().TreeView()
+            .ID("treeview")
+            .DataSource(d => d.Mvc().Controller("Orders").LoadAction("GetRemoteFolders"))
+            .DataStructure(TreeViewDataStructure.Plain)
+            .ParentIdExpr("ParentFolderId")
+            .KeyExpr("Id")
+            .DisplayExpr("FolderName")
+            .SearchEnabled(true)
+            .Width(300)
+            .Height(720)
+           // .OnItemClick("viewFilesInGrid")
+        )
+    </div>
+
+    <script>
+        function viewFilesInGrid(e)
+        {
+            var folderId = e.itemData;
+
+            return $.ajax({
+                url: "@Url.Content("~/api/Orders/GetFiles")",
+                dataType: "application/json",
+                data: { Id: folderId }
+            });
+        }
+    </script>*@
+
+@*<div class="selected-data">
+       FILES
+        @(Html.DevExtreme().List()
+                    .ID("checked-items")
+                    .Width(400)
+                    .ItemTemplate(@<text>
+        <div>
+            <%= filedata.Text %> (<%= Category %>) - $<%= itemData.size %>
+        </div>
+                    </text>)
+        )
+    </div>*@
+
+<script>
+    var folderId = 0;
+    var getFilesitems = [];
+</script>
+
+<div class="float-left">
+    @(Html.DevExtreme().TreeView()
+                .ID("treeView")
+                .CreateChildren("treeView_createChildren")
+                .RootValue(0)
+                .DataStructure(TreeViewDataStructure.Plain)
+                .VirtualModeEnabled(true)
+                .OnItemClick("fileView")
+                .SearchEnabled(true)
+                .ScrollDirection(ScrollDirection.Both)
+                .Height(920)
+                .Width(300)
+    )
+</div>
+
+<div class="float-right">
+        @(Html.DevExtreme().DataGrid<TickToolCloud.Entities.Entity.Master>()
+              .ID("gridContainer")
+              .ShowBorders(true)
+              .Columns(columns =>
+              {
+                  columns.AddFor(m => m.Id);
+                  columns.AddFor(m => m.Name);
+                  columns.AddFor(m => m.DateCreated);
+                  columns.AddFor(m => m.Type);
+              })
+              .Width(800)
+              .SearchPanel(s => s.Visible(true))
+        )
+</div>
+
+<script>
+    function treeView_createChildren(parent)                        //Get subfolder according to the parentId
+    {
+        var parentId = parent ? parent.itemData.folderId : "";
+        return $.ajax({
+            url: "@Url.Content("~/api/Orders/Top")",
+            dataType: "json",
+            data: { parentId: parentId }
+        });
+    }
+
+    function fileView(e)                                            //Retrive all the files contained in the folder.
+    {
+        folderId = e.node.itemData.folderId;
+        return $.ajax({
+            url: "@Url.Content("~/api/Orders/GetFiles")",
+            dataType: "json",
+            data: { folderId: folderId }
+        });
+       //$("#gridContainer").dxDataGrid("refresh");
+    }
+
+    //function BindGrid() {
+    //    $("#gridContainer").data("kendoGrid").dataSource.read();
+    //    $("#grid").data("kendoGrid").refresh();
+    //}
+    //function getParameter() {
+    //    var treeview = $("#treeView").data("treeView_createChildren");
+    //    var selectedNode = treeview.select();
+
+    //    var id = -1;
+    //    if (selectedNode.length != 0) {
+    //        var item = treeview.dataItem(selectedNode);
+    //        id = item.id;
+    //    }
+
+    //    return {
+    //        myId: id
+    //    };
+    //}
+</script>
+
+
+
