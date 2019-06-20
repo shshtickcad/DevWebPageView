@@ -1,17 +1,9 @@
 using DevExtremeAspNetCoreApp1.Models;
-using DevExtreme.AspNet.Data;
-using DevExtreme.AspNet.Mvc;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
 using System.Linq;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace DevExtremeAspNetCoreApp1.Controllers
 {
-
     [Route("api/[controller]")]
     public class OrdersController : Controller
     {
@@ -49,7 +41,7 @@ namespace DevExtremeAspNetCoreApp1.Controllers
                 dateCreated = x.DateCreated,
                 type = x.Type
             });
-            return  file;
+            return file;
         }
 
         /*public ActionResult GridView()
